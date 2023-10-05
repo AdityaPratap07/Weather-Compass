@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Compass</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png.png">
+</head>
+
+<body>
+    <div class="card glass">
+        <div>
+            <h1 class="app-name">WEATHER COMPASS</h1>
+        </div>
+        <div class="search">
+            <input type="text" id="mytext" placeholder="Enter city name" spellcheck="false">
+            <button id="myBtn"><img src="search1.png"></button>
+        </div>
+        <div class="error">
+            <p>Invalid city name</p>
+        </div>
+        <div class="weather">
+            <img src="rain.png" class="weather-icon">
+            <h1 class="temp">0°c</h1>
+            <h2 class="city">City Name</h2>
+            <div class="details">
+                <!-- this col is for humidity -->
+                <div class="col-1">
+                    <img src="humidity.png">
+                    <div>
+                        <p class="humidity">0%</p>
+                        <p>Humidity</p>
+                    </div>
+                    <div>
+                        <!-- this col is for wind -->
+                        <div class="col-2">
+                            <img src="wind.png">
+                            <div>
+                                <p class="wind">0 km/h</p>
+                                <p>Wind Speed</p>
+                            </div>
+                            <div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+
+                        var input = document.getElementById("mytext");
+                        input.addEventListener("keypress", function (event) {
+                            if (event.key === "Enter") {
+                                event.preventDefault();
+                                document.getElementById("myBtn").click();
+                            }
+                        });
+
+                        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+                        const searchBox = document.querySelector(".search input")
+                        const searchBtn = document.querySelector(".search button")
+                        const weatherIcon = document.querySelector(".weather-icon")
+
+                        async function checkWeather(city) {
+                            const response = await fetch(apiUrl + city + '&appid=b7733f3395901c48806c237c2b9c819f');
+
+                            if (response.status == 404) {
+                                document.querySelector(".error").style.display = "block";
+                                document.querySelector(".weather").style.display = "";
+                            }
+                            else {
+
+                                var data = await response.json();
+
+
+
+                                document.querySelector(".city").innerHTML = data.name;
+                                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+                                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+                                if (data.weather[0].main == "Clouds") {
+                                    weatherIcon.src = "clouds.png";
+                                }
+                                else if (data.weather[0].main == "Clear") {
+                                    weatherIcon.src = "clear.png";
+                                }
+                                else if (data.weather[0].main == "Rain") {
+                                    weatherIcon.src = "rain.png";
+                                }
+                                else if (data.weather[0].main == "Drizzle") {
+                                    weatherIcon.src = "drizzle.png";
+                                }
+                                else if (data.weather[0].main == "Mist") {
+                                    weatherIcon.src = "mist.png";
+                                }
+
+                                document.querySelector(".weather").style.display = "block";
+                                document.querySelector(".error").style.display = "none";
+                                
+
+
+                            }
+
+
+                        }
+
+
+                        searchBtn.addEventListener("click", () => {
+                            checkWeather(searchBox.value);
+                        })
+
+
+                    </script>
+
+</body>
+
+</html>
